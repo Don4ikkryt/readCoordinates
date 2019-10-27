@@ -24,6 +24,20 @@ const (
 	jpgRegexp = `.*\.(jpg|JPG)$`
 )
 
+type Point struct {
+	Longtitude []float64
+	Latitude   []float64
+	Filename   string
+}
+
+func newPoint(longtitude [3]float64, latitude [3]float64, filename string) *Point {
+
+	p := Point{Filename: filename}
+	p.Longtitude = append(p.Longtitude, longtitude[0], longtitude[1], longtitude[2])
+	p.Latitude = append(p.Latitude, latitude[0], latitude[1], latitude[2])
+	return &p
+}
+
 func main() {
 	parseFlags()
 	createFilteredFolder(filteredFolder)
@@ -37,8 +51,8 @@ func main() {
 
 	filenames := getFilenames(sourceFolder)
 	filesToPosition := mapFilesToCoordinates(filenames)
-	//filterPhotosBelowHeight(minHeight, filesToHeights)
-	for _, value := range filesToPosition {
+	points := createPointArray(filenames, filesToPosition)
+	for _, value := range points {
 		fmt.Println(value)
 	}
 	log.Print("Successfully filtered photos!")
@@ -164,4 +178,13 @@ func fromStringToFloat(position string) (returning [3]float64) {
 		i++
 	}
 	return
+}
+
+func createPointArray(filenames []string, position map[string][2][3]float64) (points []Point) {
+	for _, value := range filenames {
+		NewPoint := newPoint(position[value][0], position[value][1], value)
+		points = append(points, *NewPoint)
+	}
+	return
+
 }
