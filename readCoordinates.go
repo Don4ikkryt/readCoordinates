@@ -25,7 +25,11 @@ var (
 )
 
 const (
-	jpgRegexp = `.*\.(jpg|JPG)$`
+	lenghtOfEquatorInMeters float64 = 40000000.
+	circleDegrees           float64 = 360.
+	minutesInDegree                 = 21600.
+	secondsInDegree                 = 1296000.
+	jpgRegexp                       = `.*\.(jpg|JPG)$`
 )
 
 type Point struct {
@@ -57,15 +61,11 @@ func main() {
 	filesToPosition := mapFilesToCoordinates(filenames)
 	points := createPointArray(filenames, filesToPosition)
 	findNSWE(points)
-	for _, value := range points {
-		fmt.Println(value)
-	}
-	fmt.Println()
-	fmt.Println(Northest)
-	fmt.Println(Eastest)
-	fmt.Println(Westest)
-	fmt.Println(Southest)
-	log.Print("Successfully filtered photos!")
+	LatitudeDif := coordinateDiffernce(Northest., Southest)
+	LongtitudeDif := coordinateDiffernce(Westest, Eastest)
+	fmt.Println(LatitudeDif)
+	fmt.Println(LongtitudeDif)
+
 }
 
 func parseFlags() {
@@ -208,20 +208,19 @@ func findNSWE(points []Point) {
 			Southest = value
 			Eastest = value
 		} else {
-			fmt.Println("1")
-			fmt.Println(Northest)
+
 			if ifLatitude1BiggerLatitude2(value, Northest) {
 				Northest = value
 			}
-			fmt.Println(Southest)
+
 			if ifLatitude1BiggerLatitude2(Southest, value) {
 				Southest = value
 			}
-			fmt.Println(Eastest)
+
 			if ifLongtitude1BiggerLongtitude2(value, Eastest) {
 				Eastest = value
 			}
-			fmt.Println(Westest)
+
 			if ifLongtitude1BiggerLongtitude2(Westest, value) {
 				Westest = value
 
@@ -234,7 +233,10 @@ func findNSWE(points []Point) {
 
 func ifLatitude1BiggerLatitude2(point1 Point, point2 Point) bool {
 	i := 0
-
+	if len(point1.Latitude) != len(point1.Latitude) {
+		fmt.Println("Different length of coordinate")
+		return false
+	}
 	for _, value := range point1.Latitude {
 		if value != point2.Latitude[i] {
 
@@ -253,7 +255,10 @@ func ifLatitude1BiggerLatitude2(point1 Point, point2 Point) bool {
 }
 func ifLongtitude1BiggerLongtitude2(point1 Point, point2 Point) bool {
 	i := 0
-
+	if len(point1.Longtitude) != len(point1.Longtitude) {
+		fmt.Println("Different length of coordinate")
+		return false
+	}
 	for _, value := range point1.Longtitude {
 		if value != point2.Longtitude[i] {
 
@@ -270,4 +275,44 @@ func ifLongtitude1BiggerLongtitude2(point1 Point, point2 Point) bool {
 
 	}
 	return false
+}
+
+func coordinateDiffernce(coordinates1 []float64, coordinates2 []float64) (difference []float64) {
+	if len(coordinates1) != len(coordinates2) {
+		fmt.Println("Different length of coordinate")
+		return nil
+	}
+	bigger := coordinates1
+	smaller := coordinates2
+	for i := 0; i < len(coordinates1); i-- {
+		if coordinates1[i] != coordinates2[i] {
+			if coordinates1[i] > coordinates2[i] {
+				bigger = coordinates1
+				smaller = coordinates2
+			} else {
+				bigger = coordinates2
+				smaller = coordinates1
+			}
+		}
+	}
+	var result [3]float64
+	for i := len(coordinates1) - 1; i >= 0; i-- {
+		result[i] = bigger[i] - smaller[i]
+		if result[i] < 0 {
+			result[i] = 60 + bigger[i] - smaller[i]
+			if bigger[i+1] == 0 {
+				bigger[i+1] = 59
+				bigger[i+2]--
+			} else {
+				bigger[i+1]--
+			}
+
+		}
+	}
+	difference = append(difference, result[0], result[1], result[2])
+	return
+}
+func convertFromCoordinatesToMeterLatitude(coordinates []float64) (meters float64) {
+	meters = coordinates[0]*lenghtOfEquatorInMeters/circleDegrees + coordinates[1]*lenghtOfEquatorInMeters/minutesInDegree + coordinates[2]*lenghtOfEquatorInMeters/secondsInDegree
+	return
 }
