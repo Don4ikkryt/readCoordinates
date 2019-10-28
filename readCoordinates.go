@@ -18,6 +18,10 @@ import (
 var (
 	sourceFolder   string
 	filteredFolder string
+	Northest       Point
+	Southest       Point
+	Eastest        Point
+	Westest        Point
 )
 
 const (
@@ -52,9 +56,15 @@ func main() {
 	filenames := getFilenames(sourceFolder)
 	filesToPosition := mapFilesToCoordinates(filenames)
 	points := createPointArray(filenames, filesToPosition)
+	findNSWE(points)
 	for _, value := range points {
 		fmt.Println(value)
 	}
+	fmt.Println()
+	fmt.Println(Northest)
+	fmt.Println(Eastest)
+	fmt.Println(Westest)
+	fmt.Println(Southest)
 	log.Print("Successfully filtered photos!")
 }
 
@@ -187,4 +197,77 @@ func createPointArray(filenames []string, position map[string][2][3]float64) (po
 	}
 	return
 
+}
+func findNSWE(points []Point) {
+	i := 1
+	for _, value := range points {
+
+		if i == 1 {
+			Northest = value
+			Westest = value
+			Southest = value
+			Eastest = value
+		} else {
+			fmt.Println("1")
+			fmt.Println(Northest)
+			if ifLatitude1BiggerLatitude2(value, Northest) {
+				Northest = value
+			}
+			fmt.Println(Southest)
+			if ifLatitude1BiggerLatitude2(Southest, value) {
+				Southest = value
+			}
+			fmt.Println(Eastest)
+			if ifLongtitude1BiggerLongtitude2(value, Eastest) {
+				Eastest = value
+			}
+			fmt.Println(Westest)
+			if ifLongtitude1BiggerLongtitude2(Westest, value) {
+				Westest = value
+
+			}
+
+		}
+		i++
+	}
+}
+
+func ifLatitude1BiggerLatitude2(point1 Point, point2 Point) bool {
+	i := 0
+
+	for _, value := range point1.Latitude {
+		if value != point2.Latitude[i] {
+
+			if value > point2.Latitude[i] {
+
+				return true
+			} else {
+
+				return false
+			}
+		}
+		i++
+
+	}
+	return false
+}
+func ifLongtitude1BiggerLongtitude2(point1 Point, point2 Point) bool {
+	i := 0
+
+	for _, value := range point1.Longtitude {
+		if value != point2.Longtitude[i] {
+
+			if value > point2.Longtitude[i] {
+
+				return true
+			} else {
+
+				return false
+			}
+
+		}
+		i++
+
+	}
+	return false
 }
