@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"regexp"
 	"strconv"
@@ -68,16 +69,17 @@ func main() {
 		fmt.Println(value)
 	}
 	fmt.Println()
-	LatitudeDif := coordinateDiffernceLatitude(Northest, Southest)
-
+	LatitudeDif := coordinateDiffernce(Northest, Southest)
+	LongtitudeDif := coordinateDiffernce(Eastest.Longtitude, Westest.Longtitude)
 	fmt.Println(Northest)
 	fmt.Println(Southest)
 	fmt.Println(Westest)
 	fmt.Println(Eastest)
 	fmt.Println(LatitudeDif)
+	fmt.Println(LongtitudeDif)
+	fmt.Println(covertFromCoordinatesToMeterLongtitude(LongtitudeDif, &Eastest, &Westest))
+	fmt.Println(convertFromCoordinatesToMeterLatitude(LatitudeDif))
 
-	meters1 := convertFromCoordinatesToMeterLatitude(LatitudeDif)
-	fmt.Println(meters1)
 }
 
 func parseFlags() {
@@ -287,7 +289,7 @@ func ifLongtitude1BiggerLongtitude2(point1 Point, point2 Point) bool {
 	return false
 }
 
-func coordinateDiffernceLatitude(coordinates1 []float64, coordinates2 []float64) (difference []float64) {
+func coordinateDiffernce(coordinates1 []float64, coordinates2 []float64) (difference []float64) {
 	if len(coordinates1) != len(coordinates2) {
 		fmt.Println("Different length of coordinate")
 		return nil
@@ -326,6 +328,23 @@ func convertFromCoordinatesToMeterLatitude(coordinates latitude) (meters float64
 	meters = coordinates[0]*lenghtOfEquatorInMeters/circleDegrees + coordinates[1]*lenghtOfEquatorInMeters/minutesInDegree + coordinates[2]*lenghtOfEquatorInMeters/secondsInDegree
 	return
 }
-func covertFromCoordinatesToMeterLongtitude(coordinates longtitude) {
-
+func covertFromCoordinatesToMeterLongtitude(coordinates longtitude, point1 *Point, point2 *Point) (meters float64) {
+	var maxLatitude []float64
+	if ifLatitude1BiggerLatitude2(point1.Latitude, point2.Latitude) {
+		maxLatitude = point1.Latitude
+	} else {
+		maxLatitude = point2.Latitude
+	}
+	meters = math.Cos(convertDegreeInRadian(maxLatitude))*coordinates[0]*lenghtOfEquatorInMeters/circleDegrees + coordinates[1]*lenghtOfEquatorInMeters/minutesInDegree + coordinates[2]*lenghtOfEquatorInMeters/secondsInDegree
+	return
+}
+func convertDegreeInRadian(coordinates longtitude) float64 {
+	var degree float64
+	var divider float64 = 1
+	for _, value := range coordinates {
+		degree = value / divider
+		divider *= 60
+	}
+	radian := math.Pi * degree / 180
+	return radian
 }
