@@ -15,13 +15,16 @@ import (
 	"github.com/rwcarlsen/goexif/tiff"
 )
 
+type latitude []float64
+type longtitude []float64
+
 var (
 	sourceFolder   string
 	filteredFolder string
-	Northest       Point
-	Southest       Point
-	Eastest        Point
-	Westest        Point
+	Northest       latitude
+	Southest       latitude
+	Eastest        longtitude
+	Westest        longtitude
 )
 
 const (
@@ -33,8 +36,8 @@ const (
 )
 
 type Point struct {
-	Longtitude []float64
-	Latitude   []float64
+	Longtitude longtitude
+	Latitude   latitude
 	Filename   string
 }
 
@@ -61,8 +64,16 @@ func main() {
 	filesToPosition := mapFilesToCoordinates(filenames)
 	points := createPointArray(filenames, filesToPosition)
 	findNSWE(points)
-	LatitudeDif := coordinateDiffernce(Northest., Southest)
+	for _, value := range points{
+		fmt.Println(value)
+	}
+	fmt.Println()
+	LatitudeDif := coordinateDiffernce(Northest, Southest)
 	LongtitudeDif := coordinateDiffernce(Westest, Eastest)
+	fmt.Println(Northest)
+	fmt.Println(Southest)
+	fmt.Println(Westest)
+	fmt.Println(Eastest)
 	fmt.Println(LatitudeDif)
 	fmt.Println(LongtitudeDif)
 
@@ -203,26 +214,26 @@ func findNSWE(points []Point) {
 	for _, value := range points {
 
 		if i == 1 {
-			Northest = value
-			Westest = value
-			Southest = value
-			Eastest = value
+			Northest = value.Latitude
+			Westest = value.Longtitude
+			Southest = value.Latitude
+			Eastest = value.Longtitude
 		} else {
 
-			if ifLatitude1BiggerLatitude2(value, Northest) {
-				Northest = value
+			if ifLatitude1BiggerLatitude2(value.Latitude, Northest) {
+				Northest = value.Latitude
 			}
 
-			if ifLatitude1BiggerLatitude2(Southest, value) {
-				Southest = value
+			if ifLatitude1BiggerLatitude2(Southest, value.Latitude) {
+				Southest = value.Latitude
 			}
 
-			if ifLongtitude1BiggerLongtitude2(value, Eastest) {
-				Eastest = value
+			if ifLongtitude1BiggerLongtitude2(value.Longtitude, Eastest) {
+				Eastest = value.Longtitude
 			}
 
-			if ifLongtitude1BiggerLongtitude2(Westest, value) {
-				Westest = value
+			if ifLongtitude1BiggerLongtitude2(Westest, value.Longtitude) {
+				Westest = value.Longtitude
 
 			}
 
@@ -231,16 +242,17 @@ func findNSWE(points []Point) {
 	}
 }
 
-func ifLatitude1BiggerLatitude2(point1 Point, point2 Point) bool {
-	i := 0
-	if len(point1.Latitude) != len(point1.Latitude) {
+func ifLatitude1BiggerLatitude2(latitude1 latitude, latitude2 latitude) bool {
+
+	if len(latitude1) != len(latitude2) {
 		fmt.Println("Different length of coordinate")
 		return false
 	}
-	for _, value := range point1.Latitude {
-		if value != point2.Latitude[i] {
+	i := 0
+	for _, value := range latitude1 {
+		if value != latitude2[i] {
 
-			if value > point2.Latitude[i] {
+			if value > latitude2[i] {
 
 				return true
 			} else {
@@ -253,16 +265,17 @@ func ifLatitude1BiggerLatitude2(point1 Point, point2 Point) bool {
 	}
 	return false
 }
-func ifLongtitude1BiggerLongtitude2(point1 Point, point2 Point) bool {
-	i := 0
-	if len(point1.Longtitude) != len(point1.Longtitude) {
+func ifLongtitude1BiggerLongtitude2(longtitude1 longtitude, longtitude2 longtitude) bool {
+
+	if len(longtitude1) != len(longtitude2) {
 		fmt.Println("Different length of coordinate")
 		return false
 	}
-	for _, value := range point1.Longtitude {
-		if value != point2.Longtitude[i] {
+	i := 0
+	for _, value := range longtitude1 {
+		if value != longtitude2[i] {
 
-			if value > point2.Longtitude[i] {
+			if value > longtitude2[i] {
 
 				return true
 			} else {
@@ -284,7 +297,7 @@ func coordinateDiffernce(coordinates1 []float64, coordinates2 []float64) (differ
 	}
 	bigger := coordinates1
 	smaller := coordinates2
-	for i := 0; i < len(coordinates1); i-- {
+	for i := 0; i < len(coordinates1); i++ {
 		if coordinates1[i] != coordinates2[i] {
 			if coordinates1[i] > coordinates2[i] {
 				bigger = coordinates1
