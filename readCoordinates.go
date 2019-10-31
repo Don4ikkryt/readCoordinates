@@ -1,4 +1,4 @@
-package main
+package readcoordinates
 
 import (
 	"flag"
@@ -48,38 +48,6 @@ func newPoint(longtitude [3]float64, latitude [3]float64, filename string) *Poin
 	p.Longtitude = append(p.Longtitude, longtitude[0], longtitude[1], longtitude[2])
 	p.Latitude = append(p.Latitude, latitude[0], latitude[1], latitude[2])
 	return &p
-}
-
-func main() {
-	parseFlags()
-	createFilteredFolder(filteredFolder)
-
-	if sourceFolder == "" ||
-		filteredFolder == "" {
-		log.Fatal("ERROR: all flags must be set")
-	}
-
-	exif.RegisterParsers(mknote.All...)
-
-	filenames := getFilenames(sourceFolder)
-	filesToPosition := mapFilesToCoordinates(filenames)
-	points := createPointArray(filenames, filesToPosition)
-	findNSWE(points)
-	for _, value := range points {
-		fmt.Println(value)
-	}
-	fmt.Println()
-	LatitudeDif := coordinateDiffernce(Northest, Southest)
-	LongtitudeDif := coordinateDiffernce(Eastest.Longtitude, Westest.Longtitude)
-	fmt.Println(Northest)
-	fmt.Println(Southest)
-	fmt.Println(Westest)
-	fmt.Println(Eastest)
-	fmt.Println(LatitudeDif)
-	fmt.Println(LongtitudeDif)
-	fmt.Println(covertFromCoordinatesToMeterLongtitude(LongtitudeDif, &Eastest, &Westest))
-	fmt.Println(convertFromCoordinatesToMeterLatitude(LatitudeDif))
-
 }
 
 func parseFlags() {
@@ -347,4 +315,30 @@ func convertDegreeInRadian(coordinates longtitude) float64 {
 	}
 	radian := math.Pi * degree / 180
 	return radian
+}
+func getPropotion() (proportion float64) {
+	LatitudeDif := coordinateDiffernce(Northest, Southest)
+	LongtitudeDif := coordinateDiffernce(Eastest.Longtitude, Westest.Longtitude)
+	lenght := covertFromCoordinatesToMeterLongtitude(LongtitudeDif, &Eastest, &Westest)
+	width := convertFromCoordinatesToMeterLatitude(LatitudeDif)
+	proportion = lenght / width
+	return
+}
+func GetCoordinatesAndPropotion() (coordinates []Point, propotion float64) {
+	parseFlags()
+	createFilteredFolder(filteredFolder)
+
+	if sourceFolder == "" ||
+		filteredFolder == "" {
+		log.Fatal("ERROR: all flags must be set")
+	}
+
+	exif.RegisterParsers(mknote.All...)
+
+	filenames := getFilenames(sourceFolder)
+	filesToPosition := mapFilesToCoordinates(filenames)
+	coordinates = createPointArray(filenames, filesToPosition)
+	findNSWE(coordinates)
+	propotion = getPropotion()
+	return
 }
