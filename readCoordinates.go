@@ -19,8 +19,8 @@ type latitude []float64
 type longtitude []float64
 
 var (
-	Northest latitude
-	Southest latitude
+	Northest Point
+	Southest Point
 	Eastest  Point
 	Westest  Point
 )
@@ -175,25 +175,25 @@ func findNSWE(points []Point) {
 	for _, value := range points {
 
 		if i == 1 {
-			Northest = value.Latitude
+			Northest = value
 			Westest = value
-			Southest = value.Latitude
+			Southest = value
 			Eastest = value
 		} else {
 
-			if ifLatitude1BiggerLatitude2(value.Latitude, Northest) {
-				Northest = value.Latitude
+			if ifLatitude1BiggerLatitude2(value.Latitude, Northest.Latitude) {
+				Northest = value
 			}
 
-			if ifLatitude1BiggerLatitude2(Southest, value.Latitude) {
-				Southest = value.Latitude
+			if ifLatitude1BiggerLatitude2(Southest.Latitude, value.Latitude) {
+				Southest = value
 			}
 
-			if ifLongtitude1BiggerLongtitude2(value, Eastest) {
+			if ifLongtitude1BiggerLongtitude2(value.Longtitude, Eastest.Longtitude) {
 				Eastest = value
 			}
 
-			if ifLongtitude1BiggerLongtitude2(Westest, value) {
+			if ifLongtitude1BiggerLongtitude2(Westest.Longtitude, value.Longtitude) {
 				Westest = value
 
 			}
@@ -226,28 +226,30 @@ func ifLatitude1BiggerLatitude2(latitude1 latitude, latitude2 latitude) bool {
 	}
 	return false
 }
-func ifLongtitude1BiggerLongtitude2(point1 Point, point2 Point) bool {
-	i := 0
-
-	if len(point1.Longtitude) != len(point1.Longtitude) {
+func ifLongtitude1BiggerLongtitude2(longtitude1 longtitude, longtitude2 longtitude) bool {
+	if len(longtitude1) != len(longtitude2) {
 		fmt.Println("Different length of coordinate")
 		return false
 	}
-	for _, value := range point1.Longtitude {
-		if value != point2.Longtitude[i] {
+	i := 0
+	for _, value := range longtitude1 {
+		if value != longtitude2[i] {
 
-			if value > point2.Longtitude[i] {
+			if value > longtitude2[i] {
+
 				return true
 			} else {
+
 				return false
 			}
 		}
 		i++
+
 	}
 	return false
 }
 
-func coordinateDiffernce(coordinates1 []float64, coordinates2 []float64) (difference []float64) {
+func CoordinateDiffernce(coordinates1 []float64, coordinates2 []float64) (difference []float64) {
 	if len(coordinates1) != len(coordinates2) {
 		fmt.Println("Different length of coordinate")
 		return nil
@@ -282,11 +284,11 @@ func coordinateDiffernce(coordinates1 []float64, coordinates2 []float64) (differ
 	difference = append(difference, result[0], result[1], result[2])
 	return
 }
-func convertFromCoordinatesToMeterLatitude(coordinates latitude) (meters float64) {
+func ConvertFromCoordinatesToMeterLatitude(coordinates latitude) (meters float64) {
 	meters = coordinates[0]*lenghtOfEquatorInMeters/circleDegrees + coordinates[1]*lenghtOfEquatorInMeters/minutesInDegree + coordinates[2]*lenghtOfEquatorInMeters/secondsInDegree
 	return
 }
-func covertFromCoordinatesToMeterLongtitude(coordinates longtitude, point1 *Point, point2 *Point) (meters float64) {
+func ConvertFromCoordinatesToMeterLongtitude(coordinates longtitude, point1 *Point, point2 *Point) (meters float64) {
 	var maxLatitude []float64
 	if ifLatitude1BiggerLatitude2(point1.Latitude, point2.Latitude) {
 		maxLatitude = point1.Latitude
@@ -307,10 +309,10 @@ func convertDegreeInRadian(coordinates longtitude) float64 {
 	return radian
 }
 func getPropotion() (proportion float64) {
-	LatitudeDif := coordinateDiffernce(Northest, Southest)
-	LongtitudeDif := coordinateDiffernce(Eastest.Longtitude, Westest.Longtitude)
-	lenght := covertFromCoordinatesToMeterLongtitude(LongtitudeDif, &Eastest, &Westest)
-	width := convertFromCoordinatesToMeterLatitude(LatitudeDif)
+	LatitudeDif := CoordinateDiffernce(Northest.Latitude, Southest.Latitude)
+	LongtitudeDif := CoordinateDiffernce(Eastest.Longtitude, Westest.Longtitude)
+	lenght := ConvertFromCoordinatesToMeterLongtitude(LongtitudeDif, &Eastest, &Westest)
+	width := ConvertFromCoordinatesToMeterLatitude(LatitudeDif)
 	proportion = lenght / width
 	return
 }
