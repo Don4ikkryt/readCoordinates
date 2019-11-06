@@ -203,7 +203,7 @@ func findNSWE(points []Point) {
 	}
 }
 
-func ifLatitude1BiggerLatitude2(latitude1 latitude, latitude2 latitude) bool {
+func IfLatitude1BiggerLatitude2(latitude1 latitude, latitude2 latitude) bool {
 
 	if len(latitude1) != len(latitude2) {
 		fmt.Println("Different length of coordinate")
@@ -226,7 +226,7 @@ func ifLatitude1BiggerLatitude2(latitude1 latitude, latitude2 latitude) bool {
 	}
 	return false
 }
-func ifLongtitude1BiggerLongtitude2(longtitude1 longtitude, longtitude2 longtitude) bool {
+func IfLongtitude1BiggerLongtitude2(longtitude1 longtitude, longtitude2 longtitude) bool {
 	if len(longtitude1) != len(longtitude2) {
 		fmt.Println("Different length of coordinate")
 		return false
