@@ -181,19 +181,19 @@ func findNSWE(points []Point) {
 			Eastest = value
 		} else {
 
-			if ifLatitude1BiggerLatitude2(value.Latitude, Northest.Latitude) {
+			if IfLatitude1BiggerLatitude2(value.Latitude, Northest.Latitude) {
 				Northest = value
 			}
 
-			if ifLatitude1BiggerLatitude2(Southest.Latitude, value.Latitude) {
+			if IfLatitude1BiggerLatitude2(Southest.Latitude, value.Latitude) {
 				Southest = value
 			}
 
-			if ifLongtitude1BiggerLongtitude2(value.Longtitude, Eastest.Longtitude) {
+			if IfLongtitude1BiggerLongtitude2(value.Longtitude, Eastest.Longtitude) {
 				Eastest = value
 			}
 
-			if ifLongtitude1BiggerLongtitude2(Westest.Longtitude, value.Longtitude) {
+			if IfLongtitude1BiggerLongtitude2(Westest.Longtitude, value.Longtitude) {
 				Westest = value
 
 			}
@@ -290,7 +290,7 @@ func ConvertFromCoordinatesToMeterLatitude(coordinates latitude) (meters float64
 }
 func ConvertFromCoordinatesToMeterLongtitude(coordinates longtitude, point1 *Point, point2 *Point) (meters float64) {
 	var maxLatitude []float64
-	if ifLatitude1BiggerLatitude2(point1.Latitude, point2.Latitude) {
+	if IfLatitude1BiggerLatitude2(point1.Latitude, point2.Latitude) {
 		maxLatitude = point1.Latitude
 	} else {
 		maxLatitude = point2.Latitude
