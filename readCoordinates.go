@@ -204,7 +204,7 @@ func GetPoints(sourceFolder string, filteredFolder string) (coordinates []Point)
 	exif.RegisterParsers(mknote.All...)
 
 	filenames := getFilenames(sourceFolder)
-
+ 
 	filesToPosition := mapFilesToCoordinates(filenames, sourceFolder, filteredFolder)
 
 	coordinates = createPointArray(filenames, filesToPosition)
