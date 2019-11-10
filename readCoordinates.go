@@ -148,7 +148,6 @@ func fromStringToArrayFloat(position string) (returning []float64) {
 	temp := strings.Trim(position, "\"[]")
 	substrings := strings.Split(temp, "\",\"")
 
-	i := 0
 	for _, value := range substrings {
 		temp := strings.Split(value, "/")
 		divident, err := strconv.ParseFloat(temp[0], 64)
@@ -159,8 +158,8 @@ func fromStringToArrayFloat(position string) (returning []float64) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		returning[i] = divident / divider
-		i++
+		returning = append(returning, divident/divider)
+
 	}
 	return
 }
@@ -205,7 +204,9 @@ func GetPoints(sourceFolder string, filteredFolder string) (coordinates []Point)
 	exif.RegisterParsers(mknote.All...)
 
 	filenames := getFilenames(sourceFolder)
+
 	filesToPosition := mapFilesToCoordinates(filenames, sourceFolder, filteredFolder)
+
 	coordinates = createPointArray(filenames, filesToPosition)
 	return
 }
