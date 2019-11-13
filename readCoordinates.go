@@ -1,7 +1,6 @@
 package readcoordinates
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -148,7 +147,7 @@ func moveToFilteredFolder(path string, filename string, filteredFolder string) {
 func fromStringToArrayFloat(position string) (returning []float64) {
 	temp := strings.Trim(position, "\"[]")
 	substrings := strings.Split(temp, "\",\"")
-	=
+
 	for _, value := range substrings {
 		temp := strings.Split(value, "/")
 		divident, err := strconv.ParseFloat(temp[0], 64)
