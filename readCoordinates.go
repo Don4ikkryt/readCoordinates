@@ -170,17 +170,20 @@ func fromArrayFloatToFloat64(coordinates []float64) (newCoordinates float64) {
 	return
 }
 func findExtremums(points []Point) {
-	i := 1
+	var i int = 1
 	for _, value := range points {
+
 		if i == 1 {
 			PointWithBiggestLatitude = value
 			PointWithBiggestLongtitude = value
 			PointWithLeastLatitude = value
 			PointWithLeastLongtitude = value
+			i++
 			continue
 		}
 		if value.Longtitude < PointWithLeastLongtitude.Longtitude {
 			PointWithLeastLongtitude = value
+
 		}
 		if value.Longtitude > PointWithBiggestLongtitude.Longtitude {
 			PointWithBiggestLongtitude = value
@@ -191,7 +194,9 @@ func findExtremums(points []Point) {
 		if value.Latitude > PointWithBiggestLatitude.Latitude {
 			PointWithBiggestLatitude = value
 		}
+
 	}
+
 }
 func GetPoints(sourceFolder string, filteredFolder string) (coordinates []Point) {
 	createFilteredFolder(filteredFolder)
@@ -208,5 +213,8 @@ func GetPoints(sourceFolder string, filteredFolder string) (coordinates []Point)
 	filesToPosition := mapFilesToCoordinates(filenames, sourceFolder, filteredFolder)
 
 	coordinates = createPointArray(filenames, filesToPosition)
+
+	findExtremums(coordinates)
+
 	return
 }
