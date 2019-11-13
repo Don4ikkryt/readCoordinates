@@ -165,9 +165,9 @@ func fromStringToArrayFloat(position string) (returning []float64) {
 	return
 }
 func fromArrayFloatToFloat64(coordinates []float64) (newCoordinates float64) {
-	newCoordinates += coordinates[1]
-	newCoordinates += coordinates[2] / minutesInDegree
-	newCoordinates += coordinates[3] / secondsInDegree
+	newCoordinates += coordinates[0]
+	newCoordinates += coordinates[1] / minutesInDegree
+	newCoordinates += coordinates[2] / secondsInDegree
 	return
 }
 func findExtremums(points []Point) {
